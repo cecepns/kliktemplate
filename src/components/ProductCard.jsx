@@ -17,13 +17,13 @@ export default function ProductCard({ product, ...rest }) {
       data-aos="fade-up"
       {...rest}
     >
-      <div className="relative aspect-video bg-gray-100">
+      <div className="relative h-44 md:h-64 bg-gray-100 sm:h-48">
         <img
           src={productImageUrl(
             product.images?.length ? product.images[0].image_path : product.image_path
           )}
           alt={product.name}
-          className="h-full w-full object-cover object-top transition-transform group-hover:scale-105"
+          className="h-full w-full object-cover object-center transition-transform group-hover:scale-105"
         />
         {!!product.is_new && (
           <span className="absolute right-2 top-2 rounded bg-primary-600 px-2 py-0.5 text-xs font-medium text-white">
