@@ -1,6 +1,26 @@
-import { Shield } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Shield, Loader2 } from 'lucide-react'
+import { getSettings } from '../lib/api'
 
 export default function KetentuanLayanan() {
+  const [content, setContent] = useState('')
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    getSettings()
+      .then((s) => setContent(s.ketentuan_layanan ?? ''))
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+      </div>
+    )
+  }
+
   return (
     <div
       className="rounded-xl bg-white p-8 shadow-card"
@@ -10,9 +30,13 @@ export default function KetentuanLayanan() {
         <Shield className="h-6 w-6 text-primary-600" />
         Ketentuan Layanan
       </h1>
-      <p className="text-gray-600">
-        Syarat dan ketentuan penggunaan layanan kliktemplate.com.
-      </p>
+      <div className="prose prose-sm max-w-none text-gray-600">
+        {content ? (
+          <p className="whitespace-pre-wrap">{content}</p>
+        ) : (
+          <p className="text-gray-400">Belum ada ketentuan layanan.</p>
+        )}
+      </div>
     </div>
   )
 }

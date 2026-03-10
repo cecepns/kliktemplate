@@ -146,8 +146,10 @@ export default function ProductDetail() {
       ? [{ id: null, image_path: product.image_path, sort_order: 0 }]
       : []
 
-  const discountAmount = product.original_price > 0 && product.price < product.original_price
-    ? product.original_price - product.price
+  const numPrice = Number(product.price) || 0
+  const numOriginal = Number(product.original_price) || 0
+  const discountAmount = numOriginal > 0 && numPrice < numOriginal
+    ? numOriginal - numPrice
     : 0
 
   return (
@@ -166,15 +168,15 @@ export default function ProductDetail() {
             </div>
             <h2 className="mb-4 text-lg font-bold text-primary-600">{product.name}</h2>
             <div className="space-y-1 text-sm text-gray-600">
-              {product.original_price > 0 && (
-                <p>Harga: Rp{Number(product.original_price).toLocaleString('id-ID')}</p>
+              {numOriginal > 0 && (
+                <p>Harga: Rp{numOriginal.toLocaleString('id-ID')}</p>
               )}
               {discountAmount > 0 && (
-                <p className="text-red-600">Diskon: -Rp{Number(discountAmount).toLocaleString('id-ID')}</p>
+                <p className="text-red-600">Diskon: -Rp{discountAmount.toLocaleString('id-ID')}</p>
               )}
             </div>
             <p className="mt-2 font-semibold">
-              TOTAL : <span className="text-primary-600 font-bold text-lg">Rp{Number(product.price).toLocaleString('id-ID')}</span>
+              TOTAL : <span className="text-primary-600 font-bold text-lg">Rp{numPrice.toLocaleString('id-ID')}</span>
             </p>
           </div>
 

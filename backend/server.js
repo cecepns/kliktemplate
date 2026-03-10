@@ -370,6 +370,31 @@ app.get('/api/auth/me', authMiddleware, async (req, res) => {
   }
 })
 
+// PUT /api/auth/password (change password)
+app.put('/api/auth/password', authMiddleware, async (req, res) => {
+  try {
+    const { current_password, new_password } = req.body || {}
+    if (!current_password || !new_password) return res.status(400).json({ error: 'Password lama dan baru wajib diisi' })
+    if (new_password.length < 6) return res.status(400).json({ error: 'Password baru minimal 6 karakter' })
+
+    const p = await getPool()
+    if (!p) return res.status(503).json({ error: 'Database tidak tersedia' })
+
+    const [rows] = await p.query('SELECT id, password_hash FROM admin_users WHERE id = ?', [req.adminUser.id])
+    if (!rows.length) return res.status(401).json({ error: 'User tidak ditemukan' })
+
+    const valid = await bcrypt.compare(current_password, rows[0].password_hash)
+    if (!valid) return res.status(400).json({ error: 'Password lama salah' })
+
+    const hash = await bcrypt.hash(new_password, 10)
+    await p.query('UPDATE admin_users SET password_hash = ? WHERE id = ?', [hash, req.adminUser.id])
+
+    res.json({ message: 'Password berhasil diubah' })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
 // Protect all /api/admin/* routes
 app.use('/api/admin', authMiddleware)
 
@@ -1016,8 +1041,20 @@ app.put('/api/admin/orders/:id', express.json(), async (req, res) => {
 
 // --- Settings ---
 
+const SETTING_KEYS = ['announcement', 'whatsapp_number', 'ketentuan_layanan']
+
 const fallbackSettings = {
   announcement: 'Selamat datang di kliktemplate.com — Paket Script Dengan biaya lebih Hemat. Silakan cek produk terbaru dan promo kami.',
+  whatsapp_number: '6281234567890',
+  ketentuan_layanan: 'Syarat dan ketentuan penggunaan layanan kliktemplate.com.',
+}
+
+function buildSettingsObj(rows) {
+  const obj = {}
+  for (const r of rows) obj[r.setting_key] = r.setting_value
+  const result = {}
+  for (const key of SETTING_KEYS) result[key] = obj[key] ?? fallbackSettings[key] ?? ''
+  return result
 }
 
 // GET /api/settings (public — only safe keys)
@@ -1026,11 +1063,9 @@ app.get('/api/settings', async (_req, res) => {
     const p = await getPool()
     if (p) {
       const [rows] = await p.query('SELECT setting_key, setting_value FROM settings')
-      const obj = {}
-      for (const r of rows) obj[r.setting_key] = r.setting_value
-      return res.json({ announcement: obj.announcement ?? fallbackSettings.announcement })
+      return res.json(buildSettingsObj(rows))
     }
-    res.json({ announcement: fallbackSettings.announcement })
+    res.json({ ...fallbackSettings })
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
@@ -1042,9 +1077,7 @@ app.get('/api/admin/settings', async (_req, res) => {
     const p = await getPool()
     if (p) {
       const [rows] = await p.query('SELECT setting_key, setting_value FROM settings')
-      const obj = {}
-      for (const r of rows) obj[r.setting_key] = r.setting_value
-      return res.json({ announcement: obj.announcement ?? fallbackSettings.announcement })
+      return res.json(buildSettingsObj(rows))
     }
     res.json({ ...fallbackSettings })
   } catch (err) {
@@ -1055,22 +1088,24 @@ app.get('/api/admin/settings', async (_req, res) => {
 // PUT /api/admin/settings
 app.put('/api/admin/settings', express.json(), async (req, res) => {
   try {
-    const { announcement } = req.body || {}
+    const body = req.body || {}
     const p = await getPool()
     if (p) {
-      if (announcement != null) {
-        await p.query(
-          `INSERT INTO settings (setting_key, setting_value) VALUES ('announcement', ?)
-           ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)`,
-          [String(announcement)]
-        )
+      for (const key of SETTING_KEYS) {
+        if (body[key] != null) {
+          await p.query(
+            `INSERT INTO settings (setting_key, setting_value) VALUES (?, ?)
+             ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)`,
+            [key, String(body[key])]
+          )
+        }
       }
       const [rows] = await p.query('SELECT setting_key, setting_value FROM settings')
-      const obj = {}
-      for (const r of rows) obj[r.setting_key] = r.setting_value
-      return res.json({ announcement: obj.announcement ?? fallbackSettings.announcement })
+      return res.json(buildSettingsObj(rows))
     }
-    if (announcement != null) fallbackSettings.announcement = String(announcement)
+    for (const key of SETTING_KEYS) {
+      if (body[key] != null) fallbackSettings[key] = String(body[key])
+    }
     res.json({ ...fallbackSettings })
   } catch (err) {
     res.status(500).json({ error: err.message })

@@ -108,3 +108,10 @@ export async function getAdminSettings() {
 export async function updateAdminSettings(body) {
   return unwrap(admin.put('/settings', body))
 }
+
+export async function changePassword(body) {
+  const { data } = await axios.put(`${API_URL}/auth/password`, body, {
+    headers: { Authorization: `Bearer ${getAuthToken()}` },
+  })
+  return data
+}

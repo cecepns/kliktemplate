@@ -1,23 +1,17 @@
+import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
   Store,
   FileCheck,
 } from 'lucide-react'
+import { getSettings } from '../lib/api'
 import layananIcon from '../assets/layanan.png'
 import testimoniIcon from '../assets/testimoni.png'
 import whatsappIcon from '../assets/whatsapp.png'
 
 const menuItems = [
   { to: '/', icon: Store, label: 'Beranda' },
-  // { to: '/layanan-jasa', iconSrc: layananIcon, label: 'Layanan Jasa' },
   { to: '/cek-transaksi', icon: FileCheck, label: 'Cek Transaksi' },
-]
-
-const otherItems = [
-  // { to: '/admin', icon: LayoutDashboard, label: 'Admin Panel' },
-  { to: '/ketentuan-layanan', iconSrc: layananIcon, label: 'Ketentuan Layanan' },
-  { href: 'https://wa.me/6281234567890', iconSrc: whatsappIcon, label: 'Whatsapp', external: true },
-  { to: '/testimoni', iconSrc: testimoniIcon, label: 'Testimoni' },
 ]
 
 function NavItem({ to, href, icon: Icon, iconSrc, label, external }) {
@@ -60,6 +54,20 @@ function NavItem({ to, href, icon: Icon, iconSrc, label, external }) {
 }
 
 export default function Sidebar({ open, onClose }) {
+  const [waNumber, setWaNumber] = useState('6281234567890')
+
+  useEffect(() => {
+    getSettings()
+      .then((s) => { if (s.whatsapp_number) setWaNumber(s.whatsapp_number) })
+      .catch(() => {})
+  }, [])
+
+  const otherItems = [
+    { to: '/ketentuan-layanan', iconSrc: layananIcon, label: 'Ketentuan Layanan' },
+    { href: `https://wa.me/${waNumber.replace(/\D/g, '')}`, iconSrc: whatsappIcon, label: 'Whatsapp', external: true },
+    { to: '/testimoni', iconSrc: testimoniIcon, label: 'Testimoni' },
+  ]
+
   return (
     <>
       {open && (

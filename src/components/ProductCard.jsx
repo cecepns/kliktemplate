@@ -3,13 +3,16 @@ import { ShoppingCart } from 'lucide-react'
 import { productImageUrl } from '../lib/api'
 
 export default function ProductCard({ product, ...rest }) {
+  const price = Number(product.price) || 0
+  const originalPrice = Number(product.original_price) || 0
   const discountPercent =
-    product.original_price > 0 && product.price < product.original_price
-      ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
+    originalPrice > 0 && price < originalPrice
+      ? Math.round(((originalPrice - price) / originalPrice) * 100)
       : 0
 
   return (
-    <div
+    <Link
+      to={`/produk/${product.slug}`}
       className="group flex flex-col overflow-hidden rounded-xl bg-white shadow-card transition-shadow hover:shadow-cardHover"
       data-aos="fade-up"
       {...rest}
@@ -37,25 +40,22 @@ export default function ProductCard({ product, ...rest }) {
         <h3 className="mb-1 line-clamp-2 font-semibold text-gray-900">{product.name}</h3>
         <div className="mb-3 flex items-baseline gap-2">
           <span className="text-lg font-bold text-emerald-600">
-            Rp{Number(product.price).toLocaleString('id-ID')}
+            Rp{price.toLocaleString('id-ID')}
           </span>
-          {product.original_price > 0 && product.original_price > product.price && (
+          {discountPercent > 0 && (
             <span className="text-sm text-gray-400 line-through">
-              Rp{Number(product.original_price).toLocaleString('id-ID')}
+              Rp{originalPrice.toLocaleString('id-ID')}
             </span>
           )}
         </div>
         {product.sold_count != null && (
           <p className="mb-3 text-xs text-gray-500">★ {product.sold_count} Terjual</p>
         )}
-        <Link
-          to={`/produk/${product.slug}`}
-          className="mt-auto flex items-center justify-center gap-2 rounded-lg bg-primary-600 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-700"
-        >
+        <span className="mt-auto flex items-center justify-center gap-2 rounded-lg bg-primary-600 py-2.5 text-sm font-medium text-white transition-colors group-hover:bg-primary-700">
           <ShoppingCart className="h-4 w-4" />
           Beli Sekarang
-        </Link>
+        </span>
       </div>
-    </div>
+    </Link>
   )
 }
