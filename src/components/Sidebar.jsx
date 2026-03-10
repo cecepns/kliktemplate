@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import {
   Store,
   FileCheck,
@@ -55,12 +55,21 @@ function NavItem({ to, href, icon: Icon, iconSrc, label, external }) {
 
 export default function Sidebar({ open, onClose }) {
   const [waNumber, setWaNumber] = useState('6281234567890')
+  const location = useLocation()
 
   useEffect(() => {
     getSettings()
-      .then((s) => { if (s.whatsapp_number) setWaNumber(s.whatsapp_number) })
+      .then((s) => {
+        if (s.whatsapp_number) setWaNumber(s.whatsapp_number)
+      })
       .catch(() => {})
   }, [])
+
+  useEffect(() => {
+    if (open && onClose) {
+      onClose()
+    }
+  }, [location.pathname])
 
   const otherItems = [
     { to: '/ketentuan-layanan', iconSrc: layananIcon, label: 'Ketentuan Layanan' },
