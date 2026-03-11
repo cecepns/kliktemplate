@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AuthProvider } from './lib/auth'
 import Layout from './components/Layout'
 import Home from './pages/Home'
@@ -18,9 +18,21 @@ import AdminTestimonials from './pages/admin/AdminTestimonials'
 import AdminOrders from './pages/admin/AdminOrders'
 import AdminSettings from './pages/admin/AdminSettings'
 
+function ScrollToTop() {
+  const location = useLocation()
+
+  if (typeof window !== 'undefined') {
+    // Scroll ke atas setiap kali path berubah
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+  }
+
+  return null
+}
+
 function App() {
   return (
     <AuthProvider>
+      <ScrollToTop />
       <Routes>
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminLayout />}>
