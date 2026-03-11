@@ -60,7 +60,7 @@ function ImageGallery({ images }) {
         )}
       </div>
       {count > 1 && (
-        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 snap-x snap-mandatory">
+        <div className="flex flex-wrap justify-center w-full gap-2 overflow-x-auto pb-1 snap-x snap-mandatory">
           {images.map((img, idx) => (
             <button
               key={img.id ?? idx}
