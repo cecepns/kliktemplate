@@ -6,6 +6,8 @@ export default function AdminSettings() {
   const [announcement, setAnnouncement] = useState('')
   const [whatsappNumber, setWhatsappNumber] = useState('')
   const [ketentuanLayanan, setKetentuanLayanan] = useState('')
+  const [privacyPolicy, setPrivacyPolicy] = useState('')
+  const [tentangKami, setTentangKami] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
@@ -24,6 +26,8 @@ export default function AdminSettings() {
         setAnnouncement(s.announcement ?? '')
         setWhatsappNumber(s.whatsapp_number ?? '')
         setKetentuanLayanan(s.ketentuan_layanan ?? '')
+        setPrivacyPolicy(s.privacy_policy ?? '')
+        setTentangKami(s.tentang_kami ?? '')
       })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false))
@@ -39,10 +43,14 @@ export default function AdminSettings() {
         announcement,
         whatsapp_number: whatsappNumber,
         ketentuan_layanan: ketentuanLayanan,
+        privacy_policy: privacyPolicy,
+        tentang_kami: tentangKami,
       })
       setAnnouncement(res.announcement ?? '')
       setWhatsappNumber(res.whatsapp_number ?? '')
       setKetentuanLayanan(res.ketentuan_layanan ?? '')
+      setPrivacyPolicy(res.privacy_policy ?? '')
+      setTentangKami(res.tentang_kami ?? '')
       setSuccess(true)
       setTimeout(() => setSuccess(false), 3000)
     } catch (e) {
@@ -157,6 +165,38 @@ export default function AdminSettings() {
             />
             <p className="mt-1 text-xs text-gray-500">
               Konten ini akan tampil di halaman Ketentuan Layanan.
+            </p>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Kebijakan Privasi
+            </label>
+            <textarea
+              value={privacyPolicy}
+              onChange={(e) => setPrivacyPolicy(e.target.value)}
+              rows={8}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              placeholder="Tulis kebijakan privasi..."
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              Konten ini akan tampil di halaman Kebijakan Privasi.
+            </p>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Tentang Kami
+            </label>
+            <textarea
+              value={tentangKami}
+              onChange={(e) => setTentangKami(e.target.value)}
+              rows={8}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              placeholder="Tulis informasi tentang usaha/brand Anda..."
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              Konten ini akan tampil di halaman Tentang Kami.
             </p>
           </div>
 

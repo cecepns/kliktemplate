@@ -6,6 +6,8 @@ import ProductDetail from './pages/ProductDetail'
 import LayananJasa from './pages/LayananJasa'
 import CekTransaksi from './pages/CekTransaksi'
 import KetentuanLayanan from './pages/KetentuanLayanan'
+import PrivacyPolicy from './pages/PrivacyPolicy'
+import TentangKami from './pages/TentangKami'
 import Testimoni from './pages/Testimoni'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminLayout from './components/admin/AdminLayout'
@@ -36,6 +38,8 @@ function App() {
           <Route path="layanan-jasa" element={<LayananJasa />} />
           <Route path="cek-transaksi" element={<CekTransaksi />} />
           <Route path="ketentuan-layanan" element={<KetentuanLayanan />} />
+          <Route path="privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="tentang-kami" element={<TentangKami />} />
           <Route path="testimoni" element={<Testimoni />} />
         </Route>
       </Routes>

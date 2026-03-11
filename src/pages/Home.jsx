@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { Link } from "react-router-dom";
 import {
   Search,
   ChevronDown,
@@ -356,16 +357,16 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer
-        className="mt-auto flex flex-wrap items-center gap-4 border-t border-gray-200 pt-6"
-        data-aos="fade-up"
-      >
-        <a href="#" className="text-sm text-primary-600 hover:underline">
-          Kontak CS
-        </a>
-        <a href="#" className="text-sm text-primary-600 hover:underline">
-          Metode Pembayaran
-        </a>
+      <footer className="mt-auto flex flex-wrap items-center gap-4 border-t border-gray-200 pt-6">
+        <Link to="/ketentuan-layanan" className="text-sm text-primary-600 hover:underline">
+          Ketentuan Layanan
+        </Link>
+        <Link to="/privacy-policy" className="text-sm text-primary-600 hover:underline">
+          Privacy Policy
+        </Link>
+        <Link to="/tentang-kami" className="text-sm text-primary-600 hover:underline">
+          Tentang Kami
+        </Link>
       </footer>
     </div>
   );
