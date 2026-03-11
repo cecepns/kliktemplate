@@ -22,7 +22,13 @@ function ImageGallery({ images }) {
   if (!count) {
     return (
       <div className="flex justify-center rounded-lg bg-gray-100 p-4">
-        <img src={productImageUrl(null)} alt="No image" className="max-h-72 w-auto rounded object-contain" />
+        <div className="relative w-full max-w-xs aspect-square">
+          <img
+            src={productImageUrl(null)}
+            alt="No image"
+            className="h-full w-full rounded object-contain"
+          />
+        </div>
       </div>
     )
   }
@@ -32,7 +38,13 @@ function ImageGallery({ images }) {
   return (
     <div className="space-y-3">
       <div className="group relative flex justify-center rounded-lg bg-gray-100 p-4">
-        <img src={productImageUrl(current.image_path)} alt="" className="max-h-72 w-auto rounded object-contain" />
+        <div className="relative w-full max-w-md aspect-square">
+          <img
+            src={productImageUrl(current.image_path)}
+            alt=""
+            className="h-full w-full rounded object-contain"
+          />
+        </div>
         {count > 1 && (
           <>
             <button onClick={() => go(-1)} disabled={!canPrev} className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1.5 text-gray-700 shadow backdrop-blur transition-opacity hover:bg-white disabled:opacity-0">
@@ -48,16 +60,20 @@ function ImageGallery({ images }) {
         )}
       </div>
       {count > 1 && (
-        <div className="flex gap-2 overflow-x-auto pb-1">
+        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 snap-x snap-mandatory">
           {images.map((img, idx) => (
             <button
               key={img.id ?? idx}
               onClick={() => setActive(idx)}
-              className={`h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all ${
+              className={`h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all snap-start ${
                 idx === active ? 'border-primary-600 ring-1 ring-primary-600' : 'border-transparent opacity-70 hover:opacity-100'
               }`}
             >
-              <img src={productImageUrl(img.image_path)} alt="" className="h-full w-full object-cover" />
+              <img
+                src={productImageUrl(img.image_path)}
+                alt=""
+                className="h-full w-full object-contain bg-gray-100"
+              />
             </button>
           ))}
         </div>
